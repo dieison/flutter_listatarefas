@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:listatarefas/entities/task.dart';
+import 'package:listatarefas/repositories/task_repository.dart';
 import 'package:listatarefas/styles/app_theme.dart';
 import 'package:listatarefas/widgets/task_list_item.dart';
 
@@ -14,6 +15,8 @@ class _TodoListPageState extends State<TodoListPage> {
   List<Task> tasks = [];
 
   final TextEditingController taskController = TextEditingController();
+
+  final TaskRepository taskRepository = TaskRepository();
 
   @override
   Widget build(BuildContext context) {
@@ -113,6 +116,7 @@ class _TodoListPageState extends State<TodoListPage> {
         showInSnackBar('Favor informar um nome para a tarefa');
       }
     });
+    taskRepository.saveTaskList(tasks);
   }
 
   void showClearConfirmationDialog() {
