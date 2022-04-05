@@ -18,6 +18,8 @@ class _TodoListPageState extends State<TodoListPage> {
 
   final TaskRepository taskRepository = TaskRepository();
 
+  String? errorText;
+
   @override
   Widget build(BuildContext context) {
     return SafeArea(
@@ -34,10 +36,19 @@ class _TodoListPageState extends State<TodoListPage> {
                     Expanded(
                       child: TextField(
                         controller: taskController,
-                        decoration: const InputDecoration(
+                        decoration: InputDecoration(
                           labelText: 'Adicione uma tarefa',
+                          labelStyle: const TextStyle(
+                            color: Colors.cyan,
+                          ),
                           hintText: 'Ex.: Estudar flutter',
-                          border: OutlineInputBorder(),
+                          border: const OutlineInputBorder(),
+                          errorText: errorText,
+                          focusedBorder: const OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: Colors.cyan,
+                            ),
+                          ),
                         ),
                       ),
                     ),
@@ -65,6 +76,7 @@ class _TodoListPageState extends State<TodoListPage> {
                     children: [
                       for (Task task in tasks)
                         TaskListItem(
+                          key: UniqueKey(),
                           task: task,
                           onDelete: onDelete,
                         ),
@@ -105,6 +117,17 @@ class _TodoListPageState extends State<TodoListPage> {
     );
   }
 
+  @override
+  void initState() {
+    super.initState();
+
+    taskRepository.getTaskList().then((value) {
+      setState(() {
+        tasks = value;
+      });
+    });
+  }
+
   void addToList() {
     setState(() {
       String text = taskController.text;
@@ -112,7 +135,9 @@ class _TodoListPageState extends State<TodoListPage> {
         Task task = Task(title: text, date: DateTime.now());
         tasks.add(task);
         taskController.clear();
+        errorText = null;
       } else {
+        errorText = 'Favor informar um nome para a tarefa';
         showInSnackBar('Favor informar um nome para a tarefa');
       }
     });
@@ -150,6 +175,7 @@ class _TodoListPageState extends State<TodoListPage> {
     setState(() {
       tasks.clear();
     });
+    taskRepository.saveTaskList(tasks);
   }
 
   void showInSnackBar(String value) {
@@ -176,6 +202,7 @@ class _TodoListPageState extends State<TodoListPage> {
         tasks.remove(task);
       }
     });
+    taskRepository.saveTaskList(tasks);
 
     ScaffoldMessenger.of(context).clearSnackBars();
     ScaffoldMessenger.of(context).showSnackBar(
@@ -193,6 +220,7 @@ class _TodoListPageState extends State<TodoListPage> {
             setState(() {
               tasks.insert(deletedTaskIndex, task);
             });
+            taskRepository.saveTaskList(tasks);
           },
         ),
       ),

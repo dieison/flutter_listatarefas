@@ -6,7 +6,11 @@ class Task {
 
   Task({required this.title, required this.date});
 
-  Map<String, String> toJson() {
+  Task.fromJson(Map<String, dynamic> json)
+    : title = json['title'].toString(),
+      date = DateTime.parse(json['date'].toString());
+
+  Map<String, dynamic> toJson() {
     return {
       'title': title,
       'date': date.toIso8601String(),

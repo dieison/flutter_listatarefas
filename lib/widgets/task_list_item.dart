@@ -22,7 +22,7 @@ class TaskListItem extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 2),
       child: Slidable(
         direction: Axis.horizontal,
-        key: const ValueKey(0),
+        key: key,
         endActionPane: ActionPane(
           extentRatio: 0.25,
           motion: const BehindMotion(),
